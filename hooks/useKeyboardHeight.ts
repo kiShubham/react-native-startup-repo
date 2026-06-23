@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
-  Keyboard,
-  Platform,
   Dimensions,
-  KeyboardEvent,
   EmitterSubscription,
-} from 'react-native';
+  Keyboard,
+  KeyboardEvent,
+  Platform,
+} from "react-native";
 
 interface UseKeyboardHeightReturn {
   keyboardHeight: number;
@@ -28,9 +28,9 @@ export const useKeyboardHeight = (): UseKeyboardHeightReturn => {
 
     // Determine which events to listen to based on platform
     const showEvent =
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
     const hideEvent =
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     // Handle keyboard show
     const handleKeyboardShow = (event: KeyboardEvent) => {
@@ -52,7 +52,7 @@ export const useKeyboardHeight = (): UseKeyboardHeightReturn => {
       setIsKeyboardVisible(false);
 
       // Get animation duration (iOS provides this, Android might not)
-      const duration = event.duration || (Platform.OS === 'ios' ? 250 : 200);
+      const duration = event.duration || (Platform.OS === "ios" ? 250 : 200);
       setKeyboardAnimationDuration(duration);
     };
 
@@ -76,16 +76,16 @@ export const useKeyboardHeight = (): UseKeyboardHeightReturn => {
       if (isKeyboardVisible && previousHeightRef.current > 0) {
         // On screen rotation, keyboard height might change
         // This is more relevant for tablets and landscape mode
-        const screenHeight = Dimensions.get('window').height;
-        const screenWidth = Dimensions.get('window').width;
+        const screenHeight = Dimensions.get("window").height;
+        const screenWidth = Dimensions.get("window").width;
 
         // Simple heuristic: if we're in landscape and had a keyboard,
         // the height might be different
-        if (screenWidth > screenHeight && Platform.OS === 'ios') {
+        if (screenWidth > screenHeight && Platform.OS === "ios") {
           // iOS landscape keyboard is typically shorter
           const estimatedLandscapeHeight = Math.min(
             previousHeightRef.current,
-            screenHeight * 0.4
+            screenHeight * 0.4,
           );
           setKeyboardHeight(estimatedLandscapeHeight);
         }
@@ -94,8 +94,8 @@ export const useKeyboardHeight = (): UseKeyboardHeightReturn => {
 
     // Listen to dimension changes (rotation, split screen, etc.)
     dimensionSubscription = Dimensions.addEventListener(
-      'change',
-      handleDimensionChange
+      "change",
+      handleDimensionChange,
     );
 
     return () => {
