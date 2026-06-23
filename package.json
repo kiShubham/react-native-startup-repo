@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "npx tsc --noEmit",
-    "doctor": "npx expo-doctor"
+    "doctor": "npx expo-doctor --verbose"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
