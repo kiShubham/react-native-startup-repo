@@ -152,7 +152,7 @@ export const MediaPicker = forwardRef<RNView, MediaPickerProps>(
         const { assets: galleryAssets } = await MediaLibrary.getAssetsAsync({
           first: 100,
           mediaType: mediaTypeFilter,
-          sortBy: MediaLibrary.SortBy.creationTime,
+          // sortBy: MediaLibrary.SortBy.creationTime, // currently SortBy is not present in MediaLibrary , need to update this ;
         });
 
         setGalleryAssets(galleryAssets);

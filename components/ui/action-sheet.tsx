@@ -41,70 +41,51 @@ interface ActionSheetProps {
   style?: ViewStyle;
 }
 
-export function ActionSheet({
+export function ActionSheet(props: ActionSheetProps) {
+  if (Platform.OS === "ios") {
+    return <IOSActionSheet {...props} />;
+  }
+  return <AndroidActionSheet {...props} />;
+}
+
+function IOSActionSheet({
   visible,
-  onClose,
   title,
   message,
   options,
   cancelButtonTitle = "Cancel",
-  style,
+  onClose,
 }: ActionSheetProps) {
-  // Use iOS native ActionSheet on iOS
-  if (Platform.OS === "ios") {
-    useEffect(() => {
-      if (visible) {
-        const optionTitles = options.map((option) => option.title);
-        const destructiveButtonIndex = options.findIndex(
-          (option) => option.destructive,
-        );
-        const disabledButtonIndices = options
-          .map((option, index) => (option.disabled ? index : -1))
-          .filter((index) => index !== -1);
+  useEffect(() => {
+    if (!visible) return;
 
-        ActionSheetIOS.showActionSheetWithOptions(
-          {
-            title,
-            message,
-            options: [...optionTitles, cancelButtonTitle],
-            cancelButtonIndex: optionTitles.length,
-            destructiveButtonIndex:
-              destructiveButtonIndex !== -1
-                ? destructiveButtonIndex
-                : undefined,
-            disabledButtonIndices:
-              disabledButtonIndices.length > 0
-                ? disabledButtonIndices
-                : undefined,
-          },
-          (buttonIndex) => {
-            if (buttonIndex < optionTitles.length) {
-              options[buttonIndex].onPress();
-            }
-            onClose();
-          },
-        );
-      }
-    }, [visible, title, message, options, cancelButtonTitle, onClose]);
+    const optionTitles = options.map((o) => o.title);
+    const destructiveButtonIndex = options.findIndex((o) => o.destructive);
+    const disabledButtonIndices = options
+      .map((o, i) => (o.disabled ? i : -1))
+      .filter((i) => i !== -1);
 
-    // Return null for iOS as we use the native ActionSheet
-    return null;
-  }
-
-  // Custom implementation for Android and other platforms
-  return (
-    <AndroidActionSheet
-      {...{
-        visible,
-        onClose,
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
         title,
         message,
-        options,
-        cancelButtonTitle,
-        style,
-      }}
-    />
-  );
+        options: [...optionTitles, cancelButtonTitle],
+        cancelButtonIndex: optionTitles.length,
+        destructiveButtonIndex:
+          destructiveButtonIndex !== -1 ? destructiveButtonIndex : undefined,
+        disabledButtonIndices:
+          disabledButtonIndices.length > 0 ? disabledButtonIndices : undefined,
+      },
+      (buttonIndex) => {
+        if (buttonIndex < optionTitles.length) {
+          options[buttonIndex].onPress();
+        }
+        onClose();
+      },
+    );
+  }, [visible, title, message, options, cancelButtonTitle, onClose]);
+
+  return null;
 }
 
 // Custom ActionSheet implementation for Android using react-native-reanimated
@@ -114,7 +95,7 @@ function AndroidActionSheet({
   title,
   message,
   options,
-  cancelButtonTitle,
+  cancelButtonTitle = "Cancel",
   style,
 }: ActionSheetProps) {
   const [isSheetVisible, setIsSheetVisible] = useState(visible);
